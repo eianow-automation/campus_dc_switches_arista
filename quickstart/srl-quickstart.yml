@@ -1,4 +1,4 @@
-name: srl01-02
+name: srl-quickstart
 
 topology:
   nodes:
