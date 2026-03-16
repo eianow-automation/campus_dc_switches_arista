@@ -1,2 +1,4 @@
 *.bak
 *topo
+.DS_Store
+.idea/
