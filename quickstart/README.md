@@ -38,20 +38,26 @@ Then proceed to step 4 below.
    ```
 
 5. Log into srl01:
-   - Using Containerlab (recommended):
-     ```bash
-     clab exec clab-srl-quickstart-srl01 sr_cli
-     ```
    - Using Docker directly:
      ```bash
      docker exec -it clab-srl-quickstart-srl01 sr_cli
      ```
    - Using SSH (username: `admin`, password: `admin`):
      First, find the management IP:
+     
      ```bash
      clab inspect -t srl-quickstart.yml
      ```
      Then SSH:
+     
+     ```bash
+     ssh admin@clab-srl-quickstart-srl01
+     ```
+     
+     OR
+     
      ```bash
      ssh admin@<management_ip>
      ```
+
+Type `?` to view local commands and `quit` to exit the SRL CLI.
