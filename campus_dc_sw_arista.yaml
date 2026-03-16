@@ -1,0 +1,50 @@
+name: campus-dc-topo
+
+prefix: lab
+
+# mgmt:
+#   network: mgmt
+#   ipv4_subnet: 172.20.20.0/24
+
+topology:
+  kinds:
+    ceos:
+      image: ceos:latest
+
+  nodes:
+    srv01:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.111
+      startup-config: srv01.cfg
+    srv02:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.112
+      startup-config: srv02.cfg
+
+    cds01:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.113
+    cds02:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.114
+
+    host01:
+      kind: linux
+      mgmt-ipv4: 172.20.20.200
+      image: ghcr.io/hellt/network-multitool
+      exec:
+        - ip link add link eth1 name eth1.620 type vlan id 620
+        - ip link add link eth1 name eth1.750 type vlan id 750
+        - ip link set eth1.620 up
+        - ip link set eth1.750 up
+
+  links:
+    - endpoints: [srv01:eth1, srv02:eth1]
+    - endpoints: [srv01:eth17, srv02:eth17]
+    - endpoints: [srv01:eth48, srv02:eth48]
+    - endpoints: [srv01:eth2, cds01:eth2]
+    - endpoints: [srv01:eth18, cds02:eth2]
+    - endpoints: [srv02:eth2, cds01:eth18]
+    - endpoints: [srv02:eth18, cds02:eth18]
+    - endpoints: [srv01:eth5, host01:eth1]
+    - endpoints: [srv02:eth5, host01:eth2]
