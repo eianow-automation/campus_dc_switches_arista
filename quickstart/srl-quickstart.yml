@@ -1,0 +1,12 @@
+name: srl01-02
+
+topology:
+  nodes:
+    srl01:
+      kind: nokia_srlinux
+      image: ghcr.io/nokia/srlinux:24.10
+    srl:
+      kind: nokia_srlinux
+      image: ghcr.io/nokia/srlinux:24.10
+  links:
+    - endpoints: ["srl:ethernet-1/1", "srl01:ethernet-1/1"]
