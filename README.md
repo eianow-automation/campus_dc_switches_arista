@@ -83,54 +83,89 @@ Once you have cloned the lab repository, move into the new directory and deploy 
 
 ```bash
 claudia@ubuntu:~/containerlabs$ cd campus_dc_switches_arista/
-claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ ls
-README.md  campus_dc_sw_arista.clab.yml  images/  na-us-0000-test-as01.cfg  na-us-0000-test-as02.cfg  na-us-0000-test-as03.cfg  na-us-0000-test-cs01.cfg  na-us-0000-test-ds01.cfg
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ ls -l
+total 124
+-rw-rw-r--  1 claudia claudia 14237 Mar 18 21:25 CLAB_SETUP.md
+-rw-rw-r--  1 claudia claudia 23995 Mar 18 21:25 README.md
+-rw-rw-r--  1 claudia claudia  1276 Mar 18 21:25 campus_dc_sw_arista.clab.yml
+-rw-rw-r--  1 claudia claudia  5967 Mar 18 21:25 cds01.cfg
+-rw-rw-r--  1 claudia claudia  5967 Mar 18 21:25 cds02.cfg
+-rw-rw-r--  1 claudia claudia   703 Mar 18 21:23 cds_template.cfg
+drwxrwxr-x+ 7 root    claudia  4096 Mar 18 21:25 clab-campus-dc-topo
+-rw-rw-r--  1 claudia claudia  6000 Mar 18 21:23 containerlab-handy-commands.md
+drwxrwxr-x  2 claudia claudia  4096 Mar 18 21:23 images
+-rw-rw-r--  1 claudia claudia 21019 Mar 18 21:23 nxos-iosxe-eos-cli-comparison.md
+drwxrwxr-x  2 claudia claudia  4096 Mar 18 21:25 quickstart
+-rw-rw-r--  1 claudia claudia  2312 Mar 18 21:25 srv01.cfg
+-rw-rw-r--  1 claudia claudia  2281 Mar 18 21:23 srv02.cfg
+-rw-rw-r--  1 claudia claudia   302 Mar 18 21:23 start_lab.sh
 ```
 
 Deploy the lab using the topology file:
 
 `clab deploy -t campus_dc_sw_arista.clab.yml`
 
+or simply
+
+`clab deploy`
+
 ```bash
-claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ clab deploy -t campus_dc_sw_arista.clab.yml
-INFO[0000] Containerlab v0.56.0 started
-INFO[0000] Parsing & checking topology file: campus_dc_sw_arista.clab.yml
-INFO[0000] Creating docker network: Name="clab", IPv4Subnet="172.20.20.0/24", IPv6Subnet="2001:172:20:20::/64", MTU=1500
-INFO[0000] Creating lab directory: /home/claudia/containerlabs/campus_dc_switches_arista/clab-cds-seg
-INFO[0000] Creating container: "na-us-0000-test-as02"
-INFO[0000] Creating container: "na-us-0000-test-cs01"
-INFO[0000] Creating container: "na-us-0000-test-ds01"
-INFO[0000] Creating container: "na-us-0000-test-as01"
-INFO[0000] Creating container: "na-us-0000-test-as03"
-INFO[0002] Creating container: "desktop"
-INFO[0004] Created link: na-us-0000-test-cs01:eth1 <--> na-us-0000-test-ds01:eth1
-INFO[0004] Created link: na-us-0000-test-cs01:eth2 <--> na-us-0000-test-ds01:eth2
-INFO[0004] Running postdeploy actions for Arista cEOS 'na-us-0000-test-as02' node
-INFO[0005] Created link: na-us-0000-test-cs01:eth3 <--> na-us-0000-test-ds01:eth3
-INFO[0005] Created link: na-us-0000-test-ds01:eth5 <--> na-us-0000-test-as01:eth1
-INFO[0005] Created link: na-us-0000-test-cs01:eth4 <--> na-us-0000-test-ds01:eth4
-INFO[0005] Running postdeploy actions for Arista cEOS 'na-us-0000-test-cs01' node
-INFO[0005] Created link: desktop:eth1 <--> na-us-0000-test-as01:eth3
-INFO[0005] Created link: na-us-0000-test-ds01:eth6 <--> na-us-0000-test-as01:eth2
-INFO[0006] Created link: na-us-0000-test-ds01:eth7 <--> na-us-0000-test-as02:eth1
-INFO[0006] Created link: na-us-0000-test-ds01:eth8 <--> na-us-0000-test-as02:eth2
-INFO[0007] Created link: na-us-0000-test-ds01:eth9 <--> na-us-0000-test-as03:eth1
-INFO[0007] Created link: na-us-0000-test-ds01:eth10 <--> na-us-0000-test-as03:eth2
-INFO[0007] Running postdeploy actions for Arista cEOS 'na-us-0000-test-ds01' node
-INFO[0007] Running postdeploy actions for Arista cEOS 'na-us-0000-test-as01' node
-INFO[0007] Running postdeploy actions for Arista cEOS 'na-us-0000-test-as03' node
-INFO[0075] Adding containerlab host entries to /etc/hosts file
-INFO[0075] Adding ssh config for containerlab nodes
-+---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
-| # |               Name                | Container ID |     Image     | Kind  |  State  |  IPv4 Address   |     IPv6 Address     |
-+---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
-| 1 | clab-cds-seg-desktop              | c08bb91c8423 | ubuntu:latest | linux | running | 172.20.20.2/24  | 2001:172:20:20::7/64 |
-| 2 | clab-cds-seg-na-us-0000-test-as01 | 92a4f5d3cdcf | ceos:4.32.1F  | ceos  | running | 172.20.20.31/24 | 2001:172:20:20::3/64 |
-| 3 | clab-cds-seg-na-us-0000-test-as02 | 551c47850120 | ceos:4.32.1F  | ceos  | running | 172.20.20.32/24 | 2001:172:20:20::2/64 |
-| 4 | clab-cds-seg-na-us-0000-test-as03 | 96c4473726fe | ceos:4.32.1F  | ceos  | running | 172.20.20.33/24 | 2001:172:20:20::5/64 |
-| 5 | clab-cds-seg-na-us-0000-test-cs01 | 959123e6f3fa | ceos:4.32.1F  | ceos  | running | 172.20.20.10/24 | 2001:172:20:20::4/64 |
-| 6 | clab-cds-seg-na-us-0000-test-ds01 | 1070af10995b | ceos:4.32.1F  | ceos  | running | 172.20.20.20/24 | 2001:172:20:20::6/64 |
-+---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ clab deploy
+21:25:54 INFO Containerlab started version=0.74.1
+21:25:54 INFO Parsing & checking topology file=campus_dc_sw_arista.clab.yml
+21:25:54 INFO Destroying lab name=campus-dc-topo
+21:25:54 INFO Removed container name=lab-campus-dc-topo-cds02
+21:25:54 INFO Removed container name=lab-campus-dc-topo-srv01
+21:25:54 INFO Removed container name=lab-campus-dc-topo-srv02
+21:25:54 INFO Removed container name=lab-campus-dc-topo-cds01
+21:25:54 INFO Removed container name=lab-campus-dc-topo-host01
+21:25:54 INFO Removing host entries path=/etc/hosts
+21:25:54 INFO Removing SSH config path=/etc/ssh/ssh_config.d/clab-campus-dc-topo.conf
+21:25:54 INFO Removing directory path=/home/claudia/containerlabs/campus_dc_switches_arista/clab-campus-dc-topo
+21:25:54 INFO Creating lab directory path=/home/claudia/containerlabs/campus_dc_switches_arista/clab-campus-dc-topo
+21:25:55 INFO Creating container name=host01
+21:25:55 INFO Creating container name=cds01
+21:25:55 INFO Creating container name=cds02
+21:25:55 INFO Creating container name=srv01
+21:25:55 INFO Creating container name=srv02
+21:25:56 INFO Running postdeploy actions for Arista cEOS 'cds01' node
+21:25:56 INFO Created link: cds01:eth1 ▪┄┄▪ cds02:eth1
+21:25:56 INFO Running postdeploy actions for Arista cEOS 'cds02' node
+21:25:56 INFO Created link: srv01:eth1 ▪┄┄▪ srv02:eth1
+21:25:56 INFO Created link: srv01:eth17 ▪┄┄▪ srv02:eth17
+21:25:56 INFO Created link: srv01:eth48 ▪┄┄▪ srv02:eth48
+21:25:56 INFO Created link: srv01:eth2 ▪┄┄▪ cds01:eth2
+21:25:56 INFO Created link: srv02:eth2 ▪┄┄▪ cds01:eth18
+21:25:57 INFO Created link: srv01:eth18 ▪┄┄▪ cds02:eth2
+21:25:57 INFO Created link: srv02:eth18 ▪┄┄▪ cds02:eth18
+21:25:57 INFO Created link: srv02:eth5 ▪┄┄▪ host01:eth2
+21:25:57 INFO Running postdeploy actions for Arista cEOS 'srv02' node
+21:25:57 INFO Created link: srv01:eth5 ▪┄┄▪ host01:eth1
+21:25:57 INFO Running postdeploy actions for Arista cEOS 'srv01' node
+21:26:40 INFO Executed command node=host01 command="ip link add link eth1 name eth1.620 type vlan id 620" stdout=""
+21:26:40 INFO Executed command node=host01 command="ip link add link eth1 name eth1.750 type vlan id 750" stdout=""
+21:26:40 INFO Executed command node=host01 command="ip link set eth1.620 up" stdout=""
+21:26:40 INFO Executed command node=host01 command="ip link set eth1.750 up" stdout=""
+21:26:40 INFO Adding host entries path=/etc/hosts
+21:26:40 INFO Adding SSH config for nodes path=/etc/ssh/ssh_config.d/clab-campus-dc-topo.conf
+╭───────────────────────────┬─────────────────────────────────┬─────────┬───────────────────╮
+│            Name           │            Kind/Image           │  State  │   IPv4/6 Address  │
+├───────────────────────────┼─────────────────────────────────┼─────────┼───────────────────┤
+│ lab-campus-dc-topo-cds01  │ ceos                            │ running │ 172.20.20.113     │
+│                           │ ceos:latest                     │         │ 3fff:172:20:20::3 │
+├───────────────────────────┼─────────────────────────────────┼─────────┼───────────────────┤
+│ lab-campus-dc-topo-cds02  │ ceos                            │ running │ 172.20.20.114     │
+│                           │ ceos:latest                     │         │ 3fff:172:20:20::4 │
+├───────────────────────────┼─────────────────────────────────┼─────────┼───────────────────┤
+│ lab-campus-dc-topo-host01 │ linux                           │ running │ 172.20.20.200     │
+│                           │ ghcr.io/hellt/network-multitool │         │ 3fff:172:20:20::2 │
+├───────────────────────────┼─────────────────────────────────┼─────────┼───────────────────┤
+│ lab-campus-dc-topo-srv01  │ ceos                            │ running │ 172.20.20.111     │
+│                           │ ceos:latest                     │         │ 3fff:172:20:20::5 │
+├───────────────────────────┼─────────────────────────────────┼─────────┼───────────────────┤
+│ lab-campus-dc-topo-srv02  │ ceos                            │ running │ 172.20.20.112     │
+│                           │ ceos:latest                     │         │ 3fff:172:20:20::6 │
+╰───────────────────────────┴─────────────────────────────────┴─────────┴───────────────────╯
 ```
 
 > [!NOTE]
@@ -139,9 +174,9 @@ INFO[0075] Adding ssh config for containerlab nodes
 
 ### Topology
 
-![cds-seg.clab.drawio.png](cds-seg.clab.drawio.png)
+<img src="images/Mock_CDS_SRV-2026-03-16-163427.png" alt="Mock_CDS_SRV-2026-03-16-163427" style="zoom:15%;" />
 
-How to read the topology file:
+How to read the topology YAML file:
 
 First, a default image of Arista ceos:4.32.1F is defined.
 If a node section does not specify an image then that Arista image will be used to spin up that device.
@@ -150,57 +185,60 @@ In addition to the 5 Arista EOS switches, the lab includes one "desktop" node wh
 the ubuntu:latest image (a plain Linux container that simulates an end-user workstation).
 
 ```yaml
-name: cds-seg
+name: campus-dc-topo
+
+prefix: lab
+
+# mgmt:
+#   network: mgmt
+#   ipv4_subnet: 172.20.20.0/24
 
 topology:
-  defaults:
-    kind: ceos
-    image: ceos:4.32.1F
+  kinds:
+    ceos:
+      image: ceos:latest
+
   nodes:
-    desktop:
+    srv01:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.111
+      startup-config: srv01.cfg
+    srv02:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.112
+      startup-config: srv02.cfg
+
+    cds01:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.113
+      startup-config: cds01.cfg
+    cds02:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.114
+      startup-config: cds02.cfg
+
+    host01:
       kind: linux
-      image: ubuntu:latest
-      cmd: sleep infinity
-    na-us-0000-test-cs01:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.10
-      startup-config: ./na-us-0000-test-cs01.cfg
-    na-us-0000-test-ds01:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.20
-      startup-config: ./na-us-0000-test-ds01.cfg
-    na-us-0000-test-as01:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.31
-      startup-config: ./na-us-0000-test-as01.cfg
-    na-us-0000-test-as02:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.32
-      startup-config: ./na-us-0000-test-as02.cfg
-    na-us-0000-test-as03:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.33
-      startup-config: ./na-us-0000-test-as03.cfg
+      mgmt-ipv4: 172.20.20.200
+      image: ghcr.io/hellt/network-multitool
+      exec:
+        - ip link add link eth1 name eth1.620 type vlan id 620
+        - ip link add link eth1 name eth1.750 type vlan id 750
+        - ip link set eth1.620 up
+        - ip link set eth1.750 up
 
   links:
-    - endpoints: ["na-us-0000-test-cs01:eth1", "na-us-0000-test-ds01:eth1"]
-    - endpoints: ["na-us-0000-test-cs01:eth2", "na-us-0000-test-ds01:eth2"]
-    - endpoints: ["na-us-0000-test-cs01:eth3", "na-us-0000-test-ds01:eth3"]
-    - endpoints: ["na-us-0000-test-cs01:eth4", "na-us-0000-test-ds01:eth4"]
-    - endpoints: ["na-us-0000-test-ds01:eth5", "na-us-0000-test-as01:eth1"]
-    - endpoints: ["na-us-0000-test-ds01:eth6", "na-us-0000-test-as01:eth2"]
-    - endpoints: ["na-us-0000-test-ds01:eth7", "na-us-0000-test-as02:eth1"]
-    - endpoints: ["na-us-0000-test-ds01:eth8", "na-us-0000-test-as02:eth2"]
-    - endpoints: ["na-us-0000-test-ds01:eth9", "na-us-0000-test-as03:eth1"]
-    - endpoints: ["na-us-0000-test-ds01:eth10", "na-us-0000-test-as03:eth2"]
-    - endpoints: ["desktop:eth1", "na-us-0000-test-as01:eth3"]
+    - endpoints: [cds01:eth1, cds02:eth1]
+    - endpoints: [srv01:eth1, srv02:eth1]
+    - endpoints: [srv01:eth17, srv02:eth17]
+    - endpoints: [srv01:eth48, srv02:eth48]
+    - endpoints: [srv01:eth2, cds01:eth2]
+    - endpoints: [srv01:eth18, cds02:eth2]
+    - endpoints: [srv02:eth2, cds01:eth18]
+    - endpoints: [srv02:eth18, cds02:eth18]
+    - endpoints: [srv01:eth5, host01:eth1]
+    - endpoints: [srv02:eth5, host01:eth2]
 
-
-    - type: dummy
-      endpoint:
-        node: na-us-0000-test-as01
-        interface: eth4
-... <snip>
 ```
 
 

@@ -45,6 +45,7 @@
 | `clab destroy --all` | Destroy every running lab on the host (prompts for confirmation) |
 | `clab destroy --all --yes` | Destroy all labs without the confirmation prompt |
 | `clab destroy -t <file.clab.yml> --node-filter node1` | Destroy only specific nodes, leave the rest running |
+| `docker rm -f <node Name from clab inspect --all>` | If all else fails, use docker to remove the node(s) |
 
 ## Restarting / Redeploying a Topology
 
