@@ -16,11 +16,11 @@
 
 ## Installation Guides
 
-Containerlab is a lightweight, open-source CLI tool for rapidly deploying network labs using Docker (or Podman). 
+Containerlab is a lightweight, open-source CLI tool for rapidly deploying network labs using Docker (or Podman).
 
 It defines topologies in simple YAML files, enabling quick spin-up of single or multi-vendor environments for testing automation and features.  Because the labs are in YAML text files, they can easily be shared and put under revision control so a team can work off the same topology.
 
-## Key Differences from other Virtual Lab Environments 
+## Key Differences from other Virtual Lab Environments
 
 Unlike VM-heavy platforms like CML (Cisco-focused, resource-intensive simulations) or EVE-NG/GNS3 (GUI-driven, broader VM support but slower), Containerlab emphasizes container-native NOS for extreme efficiency. Lab topologies boot in seconds, use far less RAM/CPU, and integrate natively with Git, Ansible, and CI/CD pipelines.
 
@@ -28,22 +28,41 @@ Unlike VM-heavy platforms like CML (Cisco-focused, resource-intensive simulation
 >
 > Start here for setup
 >
-> [ContainerLab_Setup](CLAB_SETUP.md) 
+> [ContainerLab_Setup](CLAB_SETUP.md)
 
 
 
 ## Campus Arista Data Center Switches
 
-`campus_dc_sw_arista.yaml`
+`campus_dc_sw_arista.clab.yml`
+
+> [!NOTE]
+>
+> **Why `.clab.yml`?** Containerlab automatically discovers topology files that use the `.clab.yml` (or `.clab.yaml`) extension. If your file follows this naming convention, you can simply run `clab deploy` from the directory without specifying a file with the `-t` flag. This is a Containerlab best practice.
+
+> [!TIP]
+>
+> **You don't need `sudo` with `clab`.** If you added your user to the `docker` group during setup (with `sudo usermod -aG docker $USER`), you can run all `clab` commands without `sudo`. Just make sure you logged out and back in after adding yourself to the group. You can verify with `groups` — if you see `docker` in the output, you're all set. The examples in this guide omit `sudo` for brevity, but if you skipped the docker-group step, prepend `sudo` to each `clab` command.
 
 Topology
 
 ![Mock_CDS_SRV-2026-03-16-163427](images/Mock_CDS_SRV-2026-03-16-163427.png)
 
-This topology models a traditional MultiChassis Etherchannel Core and Data Center switches network and includes one "user device" so we can understand the "user" end of things.
+This topology models a traditional MultiChassis Etherchannel (MCEC) Core and Data Center switches network and includes one "user device" so we can understand the "user" end of things.
 
-We will use this lab to 
-1. review the work needed to provision a new subnet/vlan and 
+> [!TIP]
+>
+> **Key terms for beginners:**
+> - **cEOS** (containerized EOS) — A Docker container version of Arista's EOS (Extensible Operating System) network operating system. It behaves like a real Arista switch but runs as a lightweight container.
+> - **SVI** (Switched Virtual Interface) — A virtual Layer 3 interface on a VLAN that acts as the default gateway for devices on that VLAN.
+> - **VLAN** (Virtual LAN) — A logical grouping of switch ports into separate broadcast domains, allowing network segmentation without additional physical switches.
+> - **Access port** — A switch port that belongs to a single VLAN and connects to end devices (like a desktop or server).
+> - **Trunk port** — A switch port that carries traffic for multiple VLANs between switches.
+> - **Layer 2 (L2)** — Switching; forwarding frames based on MAC addresses within a VLAN.
+> - **Layer 3 (L3)** — Routing; forwarding packets based on IP addresses between subnets.
+
+We will use this lab to
+1. review the work needed to provision a new subnet/vlan and
 2. to review the steps needed to move a user device to a different subnet/vlan.
 
 ### Getting the lab to your Virtual Machine
@@ -56,62 +75,27 @@ will create a new directory with the repository name and place the contents of t
 
 ```bash
 claudia@ubuntu:~/containerlabs$ git clone https://github.com/eianow-automation/campus_dc_switches_arista.git
-
-
+Cloning into 'campus_dc_switches_arista'...
 ```
 
 Once you have cloned the lab repository, move into the new directory and deploy the lab.
-Note that you will have to specify which lab you want because there are several lab YAML files 
-in the repository
-
 
 ```bash
-claudia@ubuntu:~/containerlabs$ pwd
-/home/claudia/containerlabs
-claudia@ubuntu:~/containerlabs$ ls -al
-total 32
-drwxrwxr-x 8 claudia claudia 4096 Jul 28 17:27 .
-drwxr-x--- 8 claudia claudia 4096 Jul 28 15:17 ..
-drwxrwxr-x 5 claudia claudia 4096 Jul 28 14:28 cds-dhcp
-drwxrwxr-x 3 claudia claudia 4096 Jul 28 16:47 cds-seg
-drwxrwxr-x 3 claudia claudia 4096 May 14 18:40 clab-quickstart
-drwxrwxr-x 3 claudia claudia 4096 Jul 27 21:50 images
-drwxrwxr-x 3 claudia claudia 4096 May 16 17:36 new_l2vlan_lab
-drwxrwxr-x 3 claudia claudia 4096 Jul 25 12:14 seg-migration
-claudia@ubuntu:~/containerlabs$ git clone https://github.com/cldeluna/clab-ceos-segmigration.git
-Cloning into 'clab-ceos-segmigration'...
-remote: Enumerating objects: 17, done.
-remote: Counting objects: 100% (17/17), done.
-remote: Compressing objects: 100% (11/11), done.
-remote: Total 17 (delta 6), reused 15 (delta 4), pack-reused 0
-Receiving objects: 100% (17/17), 31.76 KiB | 722.00 KiB/s, done.
-Resolving deltas: 100% (6/6), done.
-claudia@ubuntu:~/containerlabs$ ls -al
-total 36
-drwxrwxr-x 9 claudia claudia 4096 Jul 28 17:28 .
-drwxr-x--- 8 claudia claudia 4096 Jul 28 15:17 ..
-drwxrwxr-x 5 claudia claudia 4096 Jul 28 14:28 cds-dhcp
-drwxrwxr-x 3 claudia claudia 4096 Jul 28 16:47 cds-seg
-drwxrwxr-x 3 claudia claudia 4096 Jul 28 17:28 clab-ceos-segmigration
-drwxrwxr-x 3 claudia claudia 4096 May 14 18:40 clab-quickstart
-drwxrwxr-x 3 claudia claudia 4096 Jul 27 21:50 images
-drwxrwxr-x 3 claudia claudia 4096 May 16 17:36 new_l2vlan_lab
-drwxrwxr-x 3 claudia claudia 4096 Jul 25 12:14 seg-migration
-claudia@ubuntu:~/containerlabs$ cd clab-ceos-segmigration/
-claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$ ls
-README.md  cds-seg.clab.drawio.png  cds-seg.clab.yml  ceos-lab.clab.yml  na-us-0000-test-as01.cfg  na-us-0000-test-as02.cfg  na-us-0000-test-as03.cfg  na-us-0000-test-cs01.cfg  na-us-0000-test-ds01.cfg
-claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$ sudo clab deploy -t cds-seg.clab.yml
+claudia@ubuntu:~/containerlabs$ cd campus_dc_switches_arista/
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ ls
+README.md  campus_dc_sw_arista.clab.yml  images/  na-us-0000-test-as01.cfg  na-us-0000-test-as02.cfg  na-us-0000-test-as03.cfg  na-us-0000-test-cs01.cfg  na-us-0000-test-ds01.cfg
 ```
 
+Deploy the lab using the topology file:
 
-`sudo clab deploy -t cds-seg.clab.yml`
+`clab deploy -t campus_dc_sw_arista.clab.yml`
 
 ```bash
-claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$ sudo clab deploy -t cds-seg.clab.yml
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ clab deploy -t campus_dc_sw_arista.clab.yml
 INFO[0000] Containerlab v0.56.0 started
-INFO[0000] Parsing & checking topology file: cds-seg.clab.yml
+INFO[0000] Parsing & checking topology file: campus_dc_sw_arista.clab.yml
 INFO[0000] Creating docker network: Name="clab", IPv4Subnet="172.20.20.0/24", IPv6Subnet="2001:172:20:20::/64", MTU=1500
-INFO[0000] Creating lab directory: /home/claudia/containerlabs/clab-ceos-segmigration/clab-cds-seg
+INFO[0000] Creating lab directory: /home/claudia/containerlabs/campus_dc_switches_arista/clab-cds-seg
 INFO[0000] Creating container: "na-us-0000-test-as02"
 INFO[0000] Creating container: "na-us-0000-test-cs01"
 INFO[0000] Creating container: "na-us-0000-test-ds01"
@@ -134,7 +118,6 @@ INFO[0007] Created link: na-us-0000-test-ds01:eth10 <--> na-us-0000-test-as03:et
 INFO[0007] Running postdeploy actions for Arista cEOS 'na-us-0000-test-ds01' node
 INFO[0007] Running postdeploy actions for Arista cEOS 'na-us-0000-test-as01' node
 INFO[0007] Running postdeploy actions for Arista cEOS 'na-us-0000-test-as03' node
-WARN[0075] Cannot parse export template /etc/containerlab/templates/export/auto.tmpl: template: auto.tmpl:49:18: executing "auto.tmpl" at <index $eps 1>: error calling index: reflect: slice index out of range
 INFO[0075] Adding containerlab host entries to /etc/hosts file
 INFO[0075] Adding ssh config for containerlab nodes
 +---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
@@ -147,8 +130,11 @@ INFO[0075] Adding ssh config for containerlab nodes
 | 5 | clab-cds-seg-na-us-0000-test-cs01 | 959123e6f3fa | ceos:4.32.1F  | ceos  | running | 172.20.20.10/24 | 2001:172:20:20::4/64 |
 | 6 | clab-cds-seg-na-us-0000-test-ds01 | 1070af10995b | ceos:4.32.1F  | ceos  | running | 172.20.20.20/24 | 2001:172:20:20::6/64 |
 +---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
-claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$
 ```
+
+> [!NOTE]
+>
+> **Management network vs. lab data-plane:** The 172.20.20.0/24 addresses shown above are the **management network** that Containerlab creates automatically. This is an out-of-band Docker network used to SSH into your nodes or access them via `docker exec`. It is completely separate from the lab's data-plane subnets (like 192.168.100.0/24) that you will configure in the exercises.
 
 ### Topology
 
@@ -156,11 +142,11 @@ claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$
 
 How to read the topology file:
 
-First, a default image of Arista ceos:4.32.1F is defined.  
+First, a default image of Arista ceos:4.32.1F is defined.
 If a node section does not specify an image then that Arista image will be used to spin up that device.
 
 In addition to the 5 Arista EOS switches, the lab includes one "desktop" node which will use
-the ubuntu:latest image ()
+the ubuntu:latest image (a plain Linux container that simulates an end-user workstation).
 
 ```yaml
 name: cds-seg
@@ -219,20 +205,21 @@ topology:
 
 
 #### Credentials
-ceos
-admin/admin
-ubuntu desktop
+
+| Node Type | Username | Password | How to Access |
+| :-------- | :------- | :------- | :------------ |
+| cEOS switches | admin | admin | `ssh admin@clab-cds-seg-<switch-name>` or `docker exec -it clab-cds-seg-<switch-name> Cli` |
+| Ubuntu desktop | root | (none — no password needed) | `docker exec -it clab-cds-seg-desktop bash` |
 
 ```bash
-claudia@ubuntu:~/containerlabs/cds-seg$ docker exec -it clab-cds-seg-desktop bash
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ docker exec -it clab-cds-seg-desktop bash
 root@desktop:/# # You are now in the Ubuntu container
 root@desktop:/# apt update
 
 ```
 
 ```bash
-# You wil be logged in as root so you don't need sudo to elevate your privileges
-# are root 
+# You will be logged in as root so you don't need sudo to elevate your privileges
 apt update
 apt install -y iproute2 iputils-ping
 
@@ -243,34 +230,22 @@ ip link set eth1 up
 
 
 
-On the switch side, you'll need to configure the corresponding interface. 
+On the switch side, you'll need to configure the corresponding interface.
 You can access the switch CLI and configure it as needed:
 
 ```bash
-docker exec -it clab-<lab-name>-switch Cli
-# or SSH
-ssh admin@clab-<lab-name>-switch
+# Access the switch CLI directly via Docker
+docker exec -it clab-cds-seg-na-us-0000-test-cs01 Cli
 
+# Or SSH into the switch using the management IP
+ssh admin@clab-cds-seg-na-us-0000-test-cs01
 ```
 
-```
-root@desktop:/# history
-    1  apt update
-    2  apt install -y iproute2 iputils-ping
-    3  ip addr add 192.168.100.33/24 dev eth1
-    4  ip link set eth1 up
-    5  ip add
-    6  ping 192.168.100.5
-    7  ping 192.168.100.1
-
-```
-
-
+You can verify the lab is running and see all node details with `clab inspect`:
 
 ``` bash
-claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$ sudo clab inspect
-[sudo] password for claudia:
-INFO[0000] Parsing & checking topology file: cds-seg.clab.yml
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ clab inspect
+INFO[0000] Parsing & checking topology file: campus_dc_sw_arista.clab.yml
 +---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
 | # |               Name                | Container ID |     Image     | Kind  |  State  |  IPv4 Address   |     IPv6 Address     |
 +---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
@@ -281,7 +256,6 @@ INFO[0000] Parsing & checking topology file: cds-seg.clab.yml
 | 5 | clab-cds-seg-na-us-0000-test-cs01 | 1c8f30bee2f7 | ceos:4.32.1F  | ceos  | running | 172.20.20.10/24 | 2001:172:20:20::5/64 |
 | 6 | clab-cds-seg-na-us-0000-test-ds01 | c460894d8a6d | ceos:4.32.1F  | ceos  | running | 172.20.20.20/24 | 2001:172:20:20::6/64 |
 +---+-----------------------------------+--------------+---------------+-------+---------+-----------------+----------------------+
-claudia@ubuntu:~/containerlabs/clab-ceos-segmigration$
 ```
 
 
@@ -309,23 +283,22 @@ Tip:
 The commands below will help you configure the IP address on the desktop.
 
 ```bash
-# if you are logged in as root you do not need to start each command with sudo
+# The desktop container runs as root, so you do NOT need sudo
 
 ip addr add 192.168.100.33/24 dev eth1 #you should confirm the interface with `ip add` command
 
 ip link set dev eth1 up   # make sure the interface is "up"
 
-ip add # verify your IP address 
+ip add # verify your IP address
 ```
 
 You may need to install some packages if the ip add command does not work (is not found)
 
 ```bash
-# if you are logged in as root you do not need to start each command with sudo
+# Remember, you are root inside the container — no sudo needed
+apt update
 
-sudo apt update
-
-sudo apt install -y net-tools iproute2
+apt install -y net-tools iproute2
 ```
 
 Default Gateway
@@ -333,23 +306,16 @@ Default Gateway
 ip route change default via 192.168.100.1 dev eth1
 ```
 
-```bash
-claudia@ubuntu:~/containerlabs/test/clab-ceos-segmigration$ docker exec -it clab-cds-seg-fwl-desktop1 bash
-root@desktop1:/# history
-    1  apt update
-    2  apt install -y iproute2 iputils-ping
-    3  ip addr add 192.168.100.33/24 dev eth1
-    4  ping 192.168.100.1
-    5  ping 192.168.0.1
-    6  exit
-    7  history
-    8  ping 192.168.100.1
-    9  exit
-   10  ip route change default via 192.168.100.1 dev eth1
-   11  ping 192.168.0.1
-   12  exit
-   13  history
+Example session on the desktop container:
 
+```bash
+claudia@ubuntu:~/containerlabs/campus_dc_switches_arista$ docker exec -it clab-cds-seg-desktop bash
+root@desktop:/# apt update
+root@desktop:/# apt install -y iproute2 iputils-ping
+root@desktop:/# ip addr add 192.168.100.33/24 dev eth1
+root@desktop:/# ip link set eth1 up
+root@desktop:/# ip route change default via 192.168.100.1 dev eth1
+root@desktop:/# ping 192.168.100.1
 ```
 
 
@@ -359,7 +325,7 @@ root@desktop1:/# history
 
 Put all links into port channels first without LACP and then for the final configuration using LACP.
 
-​	1.	Place the 4 links between cs an ds into a port channel numbered 10. Arista and other vendors call this LAG (Link Aggregation Groups) but its pretty common to just say port-channel.
+​	1.	Place the 4 links between cs and ds into a port channel numbered 10. Arista and other vendors call this LAG (Link Aggregation Groups) but its pretty common to just say port-channel.
 
 ​	2.	Place the two links between ds and as01 into a port channel numbered 100
 
@@ -385,11 +351,11 @@ using LACP, configure both ends in passive mode - what happens?
 
 using LACP, configure both ends in active mode - what happens?
 
-**Tip:** 
+**Tip:**
 
 what should you do with any existing configuration on an interface?? (that is what should you do with the switch interface configurations from Exercise 1?).
 
-**Extra Extra credit.** 
+**Extra Extra credit.**
 
 Fix your port channel configurations so that you can still ping your desktop from the core and the gateway on the core from the desktop. (think port channel rather than interface)
 
@@ -402,19 +368,19 @@ Configure dynamic routing using OSPF routing between core and distro, Move the 1
 
 1. Configure port channel 10 interface as a Layer 3 link (means that rather than having a switchport trunk interface with vlans you will have a routed point to point link on a specific subnet).  Use subnet 192.168.10.0/29.  Use the first available IP for the core and the last valid available IP for the ds.
 
-From the core, ping the 102.168.10 ds Po10 interface IP (save screen shot)
-From the distro, ping the 102.168.10 cs Po10 interface IP (save screen shot)
+From the core, ping the 192.168.10 ds Po10 interface IP (save screen shot)
+From the distro, ping the 192.168.10 cs Po10 interface IP (save screen shot)
 
-4. Configure loopback0 interfaces:
+2. Configure loopback0 interfaces:
 cs 192.168.0.1/32
 ds 192.168.0.2/32
 
-5. Configure OSPF area 10 and advertise the loopbacks.
+3. Configure OSPF area 10 and advertise the loopbacks.
 https://arista.my.site.com/AristaCommunity/s/article/a-simple-ospf-configuration
 
-**Extra credit:** Don't advertise everything.  Be deterministic about every route you are advertising.  
+**Extra credit:** Don't advertise everything.  Be deterministic about every route you are advertising.
 
-6. Move the vlan 100 SVI from the core to the distribution and route the subnet.  The cs should have a routing table which includes subnet 192.168.100.0/24 learned from the distro.
+4. Move the vlan 100 SVI from the core to the distribution and route the subnet.  The cs should have a routing table which includes subnet 192.168.100.0/24 learned from the distro.
 
 **Tip:**  Make sure routing is enabled on your core and distro
 
@@ -431,7 +397,7 @@ What special property do loopback interfaces have?
 Why is it a best practice to be specific about which routes to advertise into your routing protocol?
 
 **Results:**
-Po10 interface ping screen shots form step 1
+Po10 interface ping screen shots from step 1
 Share the routing table on both core and distro.
 From the Core, try to ping the desktop 192.168.100.33. share screen shot
 From the desktop, try to ping the vlan 100 gateway, the cs loopback and the ds loopback and share screen shots
@@ -441,95 +407,47 @@ Some of the above will fail.   Why might that be?
 
 ---
 
-```bash
-claudia@vps-331cdbb4:~/containerlab/josh-acel3$ history
-    1  sudo groups claudia
-    2  sudo apt update && sudo apt upgrade -y
-    3  sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
-    4  sudo apt install -y iproute2 iputils-ping
-    5  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-    6  for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
-    7  ls -al /etc/apt/keyrings/
-    8  whoami
-    9  sudo install -m 0755 -d /etc/apt/keyrings
-   10  ls -al /etc/apt/keyrings/
-   11  echo   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
-   12    https://download.docker.com/linux/ubuntu jammy stable" |   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-   13  sudo apt update
-   14  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-   15  sudo systemctl status docker
-   16  sudo systemctl start docker
-   17  sudo groupadd docker
-   18  sudo usermod -aG docker $USER
-   19  groups claudia
-   20  docker run hello-world
-   21  sudo apt-get update
-   22  sudo apt-get install ca-certificates curl
-   23  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-   24  sudo chmod a+r /etc/apt/keyrings/docker.asc
-   25  echo   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-   26    $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" |   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-   27  sudp
-   28  sudo apt-get update
-   29  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-   30  sudo systemctl status docker
-   31  sudo systemctl restart docker
-   32  sudo systemctl status docker
-   33  docker run hello-world
-   34  exit
-   35  whoami
-   36  ls
-   37  cd containerlab/
-   38  ls
-   39  cd images/
-   40  ls
-   41  ls -al
-   42  docker import cEOS64-lab-4.32.1F.tar ceos:4.32.1F
-   43  docker images
-   44  sudo clab version
-   45  sudo containerlab version
-   46  curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
-   47  docker images
-   48  docker import cEOS64-lab-4.32.1F.tar ceos:latest
-   49  docker images
-   50  mkdir ~/clab-quickstart 
-   51  cd ~/clab-quickstart
-   52  curl -LO https://raw.githubusercontent.com/srl-labs/containerlab/main/lab-examples/srlceos01/srlceos01.clab.yml
-   53  cd ..
-   54  ls
-   55  mv clab-quickstart/ containerlab/
-   56  ls
-   57  cd containerlab/
-   58  ls
-   59  cd clab-quickstart/
-   60  ls
-   61  sudo clab deploy
-   62  ls
-   63  vi srlceos01.clab.yml 
-   64  sudo clab deploy
-   65  sudo clab destroy
-   66  ls
-   67  cd ..
-   68  mkdir josh-acel3
-   69  cd josh-acel3/
-   70  vi josh-acel2.clab.yml
-   71  sudo clab deploy
-   72  sudo clab destroy -h
-   73  sudo clab destroy -c
-   74  time -h
-   75  time sudo clab deploy
-   76  sudo clab destroy -c
-   77  free -h
-   78  time sudo clab deploy
-   79  free -h
-   80  top
-   81  sudo clab inspect
-   82  history
+> [!NOTE]
+>
+> **Reference: Sample Docker & Containerlab Installation Session**
+>
+> The shell history below is included as a reference showing one user's complete installation session (Docker, Containerlab, and cEOS image import). This is not something you need to run step by step — see [CLAB_SETUP.md](CLAB_SETUP.md) for the official setup instructions. This is provided so you can see the general flow of commands involved.
 
+```bash
+# 1. Install Docker prerequisites
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# 2. Add Docker GPG key and repository
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 3. Install Docker Engine
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# 4. Start Docker and add your user to the docker group
+sudo systemctl start docker
+sudo groupadd docker
+sudo usermod -aG docker $USER
+# Log out and back in for group membership to take effect
+
+# 5. Verify Docker works
+docker run hello-world
+
+# 6. Install Containerlab
+curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
+
+# 7. Import the Arista cEOS image (you must have the .tar file)
+docker import cEOS64-lab-4.32.1F.tar ceos:4.32.1F
+
+# 8. Verify images are available
+docker images
 ```
 
 
-# Handy Linux Commads
+# Handy Linux Commands
 
 | Command      | Description                                                  | Common Usage                                                 | Category                   |
 | :----------- | :----------------------------------------------------------- | :----------------------------------------------------------- | :------------------------- |
@@ -557,4 +475,3 @@ claudia@vps-331cdbb4:~/containerlab/josh-acel3$ history
 # Containerlab Handy Commands Reference
 
 [Clab handy commands](containerlab-handy-commands.md)
-

@@ -28,7 +28,7 @@ Those platforms rely on full virtual machines and typically have graphical inter
 - [Step 1 — Install Docker](#step-1--install-docker)
 - [Step 2 — Verify Docker is Working](#step-2--verify-docker-is-working)
 - [Step 3 — (Optional) Run Docker Without sudo](#step-3--optional-run-docker-without-sudo)
-- [Step 4 — Install Containerlab](#step-4--install-containerlab)
+- [Step 4 — Install & Test Containerlab](#step-4--install-and-test-containerlab)
 - [Step 5 — Get the cEOS Image onto Your Server](#step-5--get-the-ceos-image-onto-your-server)
 - [Step 6 — Import the cEOS Image into Docker](#step-6--import-the-ceos-image-into-docker)
 - [Command Line Editor](#command-line-editor)
@@ -174,7 +174,7 @@ source ~/.bashrc
 
 ---
 
-## Step 4 — Install Containerlab
+## Step 4 — Install and Test Containerlab
 
 The easiest way to install Containerlab is with their one-line setup script. This installs Containerlab and any remaining dependencies.
 
@@ -185,6 +185,12 @@ curl -sL https://containerlab.dev/setup | sudo -E bash -s "all"
 > [!NOTE]
 >
 > This script has been tested on Ubuntu 20.04, 22.04, 23.10, and 24.04.
+
+### Test
+
+This repository comes with a modified quickstart topology based on Nokia's SRL Linux. This image is availble on the internet and so can be downloaded without an account and so serves as an easy way to test your Containerlab installation.
+
+[SRL Linux Containerlab Topology](quickstart/README.md)
 
 For more details, see the official docs:
 
