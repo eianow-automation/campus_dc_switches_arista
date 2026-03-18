@@ -52,7 +52,8 @@ This topology models a traditional MultiChassis Etherchannel (MCEC) Core and Dat
 
 > [!TIP]
 >
-> **Key terms for beginners:**
+> **Key terms:**
+>
 > - **cEOS** (containerized EOS) — A Docker container version of Arista's EOS (Extensible Operating System) network operating system. It behaves like a real Arista switch but runs as a lightweight container.
 > - **SVI** (Switched Virtual Interface) — A virtual Layer 3 interface on a VLAN that acts as the default gateway for devices on that VLAN.
 > - **VLAN** (Virtual LAN) — A logical grouping of switch ports into separate broadcast domains, allowing network segmentation without additional physical switches.

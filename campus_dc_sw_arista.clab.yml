@@ -24,9 +24,11 @@ topology:
     cds01:
       kind: ceos
       mgmt-ipv4: 172.20.20.113
+      startup-config: cds01.cfg
     cds02:
       kind: ceos
       mgmt-ipv4: 172.20.20.114
+      startup-config: cds02.cfg
 
     host01:
       kind: linux
@@ -39,6 +41,7 @@ topology:
         - ip link set eth1.750 up
 
   links:
+    - endpoints: [cds01:eth1, cds02:eth1]
     - endpoints: [srv01:eth1, srv02:eth1]
     - endpoints: [srv01:eth17, srv02:eth17]
     - endpoints: [srv01:eth48, srv02:eth48]
