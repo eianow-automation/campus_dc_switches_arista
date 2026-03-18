@@ -1,0 +1,12 @@
+name: srl-quickstart
+
+topology:
+  nodes:
+    srl01:
+      kind: nokia_srlinux
+      image: ghcr.io/nokia/srlinux:24.10
+    srl02:
+      kind: nokia_srlinux
+      image: ghcr.io/nokia/srlinux:24.10
+  links:
+    - endpoints: ["srl01:ethernet-1/1", "srl02:ethernet-1/1"]

@@ -1,3 +1,5 @@
+<img src="images/EIA Logo FINAL small_Round.png" alt="EIA Logo" style="zoom:15%; float:right; margin-left:8px;" />
+
 # NX-OS vs IOS-XE vs EOS — CLI & Configuration Quick Reference
 
 A quick-reference comparison for network engineers working across Cisco NX-OS, Cisco IOS-XE, and Arista EOS platforms, focused on CLI and configuration differences.
