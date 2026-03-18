@@ -82,6 +82,7 @@ These are essential for making sure your host isn't running out of resources whe
 | Command | Description |
 |---|---|
 | `docker stats` | **Live** CPU, memory, network, and disk I/O for all running containers |
+| `docker stats $(docker ps --filter "name=clab-campus-dc-topo-" -q) --no-stream` | Note Live!  shows CPU, memory, network, and disc I/O for a specific lab (clab-campus-dc-topo in this case) |
 | `docker stats --no-stream` | Snapshot of container resource usage (non-blocking, runs once) |
 | `docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}"` | Custom formatted container stats |
 | `docker system df` | Show disk usage by images, containers, volumes, and build cache |
