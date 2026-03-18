@@ -23,22 +23,38 @@ topology:
 
     cds01:
       kind: ceos
-      mgmt-ipv4: 172.20.20.113
+      mgmt-ipv4: 172.20.20.101
       startup-config: cds01.cfg
     cds02:
       kind: ceos
-      mgmt-ipv4: 172.20.20.114
+      mgmt-ipv4: 172.20.20.102
       startup-config: cds02.cfg
 
     host01:
       kind: linux
       mgmt-ipv4: 172.20.20.200
       image: ghcr.io/hellt/network-multitool
+      extras:
+        privileged: true
       exec:
-        - ip link add link eth1 name eth1.620 type vlan id 620
-        - ip link add link eth1 name eth1.750 type vlan id 750
-        - ip link set eth1.620 up
-        - ip link set eth1.750 up
+        # Create LACP bond
+        - modprobe bonding
+        - ip link add bond0 type bond mode 802.3ad miimon 100
+        - bash -c 'echo fast > /sys/class/net/bond0/bonding/lacp_rate'
+        - bash -c 'echo layer3+4 > /sys/class/net/bond0/bonding/xmit_hash_policy'
+        # Flush and enslave members
+        - ip addr flush dev eth1
+        - ip addr flush dev eth2
+        - ip link set eth1 down
+        - ip link set eth1 master bond0
+        - ip link set eth1 up
+        - ip link set eth2 down
+        - ip link set eth2 master bond0
+        - ip link set eth2 up
+        # Bring up bond and assign IP
+        - ip link set bond0 up
+        - ip addr add 10.1.7.10/24 dev bond0
+        - ip route add default via 10.1.7.1
 
   links:
     - endpoints: [cds01:eth1, cds02:eth1]
