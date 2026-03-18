@@ -16,7 +16,11 @@ Unlike VM-heavy platforms like CML (Cisco-focused, resource-intensive simulation
 >
 > Having some basic Linux training is helpful for this and for automation in general.  See the [Handy Linux Commands](#handy-linux-commands) section at the bottom of this document.
 
+---
 
+[TOC]
+
+---
 
 ## Installing
 Clab works best in Linux. 
@@ -74,13 +78,9 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 ```
 
-
-
 ```bash
 sudo apt-get update
 ```
-
-
 
 Install Docker Packages
 
