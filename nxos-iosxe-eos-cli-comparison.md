@@ -1,4 +1,4 @@
-<img src="images/EIA Logo FINAL small_Round.png" alt="EIA Logo" style="zoom:15%; float:right; margin-left:8px;" />
+# <img src="images/EIA Logo FINAL small_Round.png" alt="EIA Logo" style="zoom:15%; float:right; margin-left:8px;" />
 
 # NX-OS vs IOS-XE vs EOS — CLI & Configuration Quick Reference
 
@@ -126,7 +126,7 @@ Each platform uses a different terminology and approach for link aggregation and
 | **Link aggregation** | Port-channel | EtherChannel (Port-channel) | Port-Channel |
 | **Aggregation protocol** | LACP or static | LACP, PAgP, or static | LACP or static |
 | **Multi-chassis redundancy** | vPC (Virtual Port-Channel) | StackWise Virtual / VSS | MLAG (Multi-Chassis Link Aggregation) |
-| **Enable feature** | `feature vpc` / `feature lacp` | (always available) | (always available) |
+| **Enable feature** | `feature vpc` / `feature lacp` | (always available per license) | (always available per license) |
 | **Management** | Switch Level (2 switches) | One Logical Switch | Switch Level (2 switches) |
 
 
