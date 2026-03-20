@@ -320,8 +320,16 @@ docker import cEOS64-lab-4.33.0F.tar.xz ceos:4.33.0F
 
 This makes it easier to reference in your Containerlab topology files — you can just use `ceos:latest` instead of remembering the exact version number.
 
+Find the IMAGE ID 
+
 ```bash
-docker import cEOS64-lab-<version>.tar.xz ceos:latest
+docker images
+# OR
+docker images | grep ceos
+```
+
+```bash
+docker tag <IMAGE_ID> ceos:latest
 ```
 
 ### Verify the image was imported
@@ -331,6 +339,31 @@ docker images | grep ceos
 ```
 
 You should see your image listed with both the version tag and the `latest` tag.
+
+Example:
+
+```bash
+claudia@ubuntu:~/docker_images$ ls
+cEOS64-lab-4.34.2F.tar.xz  cEOS64-lab-4.35.2F.tar
+claudia@ubuntu:~/docker_images$ docker import cEOS64-lab-4.35.2F.tar ceos:4.35.2F
+sha256:e92e289f63a8164f822c2b82e44ced34a657edb267f1dd530c5ae408adc38caf
+claudia@ubuntu:~/docker_images$ docker images | grep ceos
+ceos                              4.35.2F       e92e289f63a8   18 seconds ago   2.56GB
+ceos                              4.33.0F       883a1c30736b   16 months ago    2.46GB
+ceos                              latest        883a1c30736b   16 months ago    2.46GB
+ceos                              4.32.1F       03d18c44cf7c   20 months ago    2.43GB
+ceos                              4.31.2F       5caf61f4924c   2 years ago      2.47GB
+claudia@ubuntu:~/docker_images$ docker tag e92e289f63a8 ceos:latest
+claudia@ubuntu:~/docker_images$ docker images | grep ceos
+ceos                              4.35.2F       e92e289f63a8   53 seconds ago   2.56GB
+ceos                              latest        e92e289f63a8   53 seconds ago   2.56GB
+ceos                              4.33.0F       883a1c30736b   16 months ago    2.46GB
+ceos                              4.32.1F       03d18c44cf7c   20 months ago    2.43GB
+ceos                              4.31.2F       5caf61f4924c   2 years ago      2.47GB
+claudia@ubuntu:~/docker_images$
+```
+
+
 
 ---
 

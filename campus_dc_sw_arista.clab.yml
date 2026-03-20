@@ -12,14 +12,6 @@ topology:
       image: ceos:latest
 
   nodes:
-    srv01:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.111
-      startup-config: srv01.cfg
-    srv02:
-      kind: ceos
-      mgmt-ipv4: 172.20.20.112
-      startup-config: srv02.cfg
 
     cds01:
       kind: ceos
@@ -29,6 +21,17 @@ topology:
       kind: ceos
       mgmt-ipv4: 172.20.20.102
       startup-config: cds02.cfg
+
+    srv01:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.111
+      startup-config: srv01.cfg
+    srv02:
+      kind: ceos
+      mgmt-ipv4: 172.20.20.112
+      startup-config: srv02.cfg
+
+
 
     host01:
       kind: linux
